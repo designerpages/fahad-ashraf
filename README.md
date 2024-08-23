@@ -19,6 +19,8 @@ This is an [Expo](https://expo.dev) project
 ## Overview
  This project is a React Native application built with Expo. It has CRUD operations, sorting, and searching functionalities.
 
+![Codeium logo](assets/images/demo.png)
+
 ## Features
 - CRUD Operations
 - Sorting: By Name or Email with Asc. and Dsc.
