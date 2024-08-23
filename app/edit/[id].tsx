@@ -1,15 +1,14 @@
 import React from 'react';
+import { Colors } from '@/constants/Colors';
 import { FormField } from '@/components/FormField';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Stack, useRouter, useLocalSearchParams } from 'expo-router';
 import { StyleSheet, View, Button, Text } from 'react-native';
 import { useForm } from 'react-hook-form';
+import { useQueryClient } from '@tanstack/react-query';
 import { User } from '@/api/users.api';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getUsers } from '@/api/users.api';
-import { Colors } from '@/constants/Colors';
 
 const userSchema = z.object({
   name: z.string().min(1, { message: 'Name is required' }),
@@ -36,7 +35,6 @@ export default function EditUserScreen() {
     },
   });
 
-
   const updateUser = (modifiedUser: User) => queryClient.setQueryData(['users'], (users: User[]) => {
     return users.map((u) => (u.id === user?.id ? modifiedUser : u));
   });
@@ -44,8 +42,6 @@ export default function EditUserScreen() {
   const createUser = (newUser: User) => queryClient.setQueryData(['users'], (users: User[]) => {
     return [...users, newUser];
   });
-
-  console.log(user?.id);
 
   const onSubmit = (data: User) => {
     if(id === '0') {

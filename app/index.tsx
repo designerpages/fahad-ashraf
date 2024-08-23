@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, FlatList, TextInput } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Href, Stack, useRouter } from 'expo-router';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import * as UsersApi from '@/api/users.api';
 import { User } from '@/api/users.api';
 import { Colors } from '@/constants/Colors';
+import { UserCard } from '@/components/UserCard';
 
 export default function Index() {
   const router = useRouter();
   const queryClient = useQueryClient();
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [sortedUsers, setSortedUsers] = useState<User[]>([]);
   const [sortType, setSortType] = useState<'name' | 'email'>('name');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
@@ -21,9 +21,7 @@ export default function Index() {
     queryFn: UsersApi.getUsers,
   });
 
-  const handleEdit = (id: number) => {
-    router.push(`/edit/${id}`);
-  };
+  const handleEdit = (id: number) => router.push(`/edit/${id}`);
 
   const handleSortToggle = (type: 'name' | 'email') => {
     if (sortType === type) {
@@ -36,13 +34,9 @@ export default function Index() {
     }
   };
 
-  const deleteUser = (id: number) => queryClient.setQueryData(['users'], (users: User[]) => {
+  const handleDelete = (id: number) => queryClient.setQueryData(['users'], (users: User[]) => {
     return users.filter((u) => (u.id !== id));
   });
-
-  const handleDelete = (id: number) => {
-    deleteUser(id);
-  };
 
   const filteredUsers = (users: User[]) => {
     const filteredUsers = users.filter((user) =>
@@ -63,25 +57,7 @@ export default function Index() {
 
   if (isLoading) return <Text>Loading...</Text>;
 
-  const renderUserCard = ({ item }: { item: User }) => (
-    <View style={styles.card}>
-      <View style={styles.userInfo}>
-        <Text style={styles.name}>{item.name}</Text>
-        <Text style={styles.details}>Username: {item.username}</Text>
-        <Text style={styles.details}>Email: {item.email}</Text>
-        <Text style={styles.details}>Phone: {item.phone}</Text>
-        <Text style={styles.details}>Website: {item.website}</Text>
-      </View>
-      <View style={styles.actions}>
-        <TouchableOpacity onPress={() => handleEdit(item.id)} style={styles.icon}>
-          <MaterialIcons name="edit" size={24} color="blue" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => handleDelete(item.id)} style={styles.icon}>
-          <MaterialIcons name="delete" size={24} color="red" />
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
+  const renderUserCard = ({ item }: { item: User }) => <UserCard item={item} handleEdit={handleEdit} handleDelete={handleDelete} />;
 
   return (
     <View style={styles.container}>
@@ -154,38 +130,5 @@ const styles = StyleSheet.create({
     padding: 8,
     borderColor: Colors.grey,
     backgroundColor: 'white',
-  },
-  card: {
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    padding: 16,
-    marginVertical: 8,
-    marginHorizontal: 16,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    elevation: 2, // For Android shadow
-    shadowColor: '#000', // For iOS shadow
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-  },
-  userInfo: {
-    flex: 1,
-  },
-  name: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 4,
-  },
-  details: {
-    fontSize: 14,
-    color: Colors.text,
-  },
-  actions: {
-    flexDirection: 'row',
-  },
-  icon: {
-    marginLeft: 16,
   },
 });
