@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, FlatList, TextInput } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
-import { Href, Stack, useRouter } from 'expo-router';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
 import * as UsersApi from '@/api/users.api';
-import { User } from '@/api/users.api';
 import { Colors } from '@/constants/Colors';
+import { Href, Stack, useRouter } from 'expo-router';
+import { MaterialIcons } from '@expo/vector-icons';
+import { Text, View, StyleSheet, TouchableOpacity, FlatList, TextInput } from 'react-native';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { User } from '@/api/users.api';
 import { UserCard } from '@/components/UserCard';
 
 export default function Index() {
   const router = useRouter();
-  const queryClient = useQueryClient();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [sortType, setSortType] = useState<'name' | 'email'>('name');
@@ -20,8 +19,6 @@ export default function Index() {
     queryKey: ['users'],
     queryFn: UsersApi.getUsers,
   });
-
-  const handleEdit = (id: number) => router.push(`/edit/${id}`);
 
   const handleSortToggle = (type: 'name' | 'email') => {
     if (sortType === type) {
@@ -33,10 +30,6 @@ export default function Index() {
       setSortOrder('asc');
     }
   };
-
-  const handleDelete = (id: number) => queryClient.setQueryData(['users'], (users: User[]) => {
-    return users.filter((u) => (u.id !== id));
-  });
 
   const filteredUsers = (users: User[]) => {
     const filteredUsers = users.filter((user) =>
@@ -57,7 +50,7 @@ export default function Index() {
 
   if (isLoading) return <Text>Loading...</Text>;
 
-  const renderUserCard = ({ item }: { item: User }) => <UserCard item={item} handleEdit={handleEdit} handleDelete={handleDelete} />;
+  const renderUserCard = ({ item }: { item: User }) => <UserCard item={item} />;
 
   return (
     <View style={styles.container}>

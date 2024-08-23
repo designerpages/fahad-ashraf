@@ -1,18 +1,18 @@
-import { Text, TouchableOpacity, View, StyleSheet } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
 import React from 'react';
 import { Colors } from '@/constants/Colors';
+import { Text, TouchableOpacity, View, StyleSheet } from 'react-native';
 import { User } from '@/api/users.api';
+import { useRouter } from 'expo-router';
 
 interface UserCardProps {
   item: User;
-  handleEdit: (id: number) => void;
-  handleDelete: (id: number) => void;
 }
 
-export function UserCard({ item, handleEdit, handleDelete }: UserCardProps) {
+export function UserCard({ item }: UserCardProps) {
+  const router = useRouter();
+
   return (
-    <View style={styles.card}>
+    <TouchableOpacity onPress={() => router.push(`/details/${item.id}`)} style={styles.card}>
       <View style={styles.userInfo}>
         <Text style={styles.name}>{item.name}</Text>
         <Text style={styles.details}>Username: {item.username}</Text>
@@ -20,15 +20,7 @@ export function UserCard({ item, handleEdit, handleDelete }: UserCardProps) {
         <Text style={styles.details}>Phone: {item.phone}</Text>
         <Text style={styles.details}>Website: {item.website}</Text>
       </View>
-      <View style={styles.actions}>
-        <TouchableOpacity onPress={() => handleEdit(item.id)} style={styles.icon}>
-          <MaterialIcons name="edit" size={24} color="blue" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => handleDelete(item.id)} style={styles.icon}>
-          <MaterialIcons name="delete" size={24} color="red" />
-        </TouchableOpacity>
-      </View>
-    </View>
+    </TouchableOpacity>
   )
 }
 

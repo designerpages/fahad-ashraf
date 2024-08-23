@@ -20,10 +20,13 @@ const userSchema = z.object({
 
 export default function EditUserScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+
   const router = useRouter();
   const queryClient = useQueryClient();
+
   const users = queryClient.getQueryData<User[]>(['users']) || [];
   const user = users.find((u) => u.id.toString() === id) || null;
+
   const { control, handleSubmit, formState: { errors } } = useForm<User>({
     resolver: zodResolver(userSchema),
     defaultValues: {
