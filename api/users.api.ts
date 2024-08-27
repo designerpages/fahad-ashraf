@@ -20,3 +20,13 @@ export const getUsers = async (): Promise<User[]> => {
     throw error;
   }
 };
+
+export const updateUser = async (user: User): Promise<User> => {
+  try {
+    const response: AxiosResponse<User> = await axios.put(`${BASE_URL}/${user.id}`, user);
+    return response.data;
+  } catch (error) {
+    console.error('Error updating User:', error);
+    throw error;
+  }
+};
