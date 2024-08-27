@@ -3,7 +3,7 @@ import { Colors } from '@/constants/Colors';
 import { FormField } from '@/components/FormField';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Stack, useRouter, useLocalSearchParams } from 'expo-router';
-import { StyleSheet, View, Button, Text, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, Button, Text, ActivityIndicator, Alert } from 'react-native';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import * as UsersApi from '@/api/users.api';
@@ -62,6 +62,10 @@ export default function EditUserScreen() {
   };
 
   useEffect(() => {
+    if(updateUsersMutation.status === 'error') {
+      Alert.alert('Error', 'Failed to update user');
+      return;
+    }
     if (updateUsersMutation.status === 'success') {
       queryClient.setQueryData(['users'], (users: UsersApi.User[]) => {
         return users.map((u) => (u.id === user?.id ? modifiedUser : u));
